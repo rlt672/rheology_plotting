@@ -29,7 +29,21 @@ import os
 import matplotlib.pylab as plt
 import pandas as pd
 
-def import_rheo_data(filename, pagename, start):
-    rheo_data = pd.readcsv(filename, pagename)
+filename = '/Users/rtruby/Desktop/rheologyfilestocsvs/PtBlack_Strain Sweep.xls'
+pagename = 'Amplitude sweep - 1'
+labels = 1
+skipped_rows = [0, 1, 2]
 
-    
+def import_rheo_data(filename, pagename, skipped_rows, labels):
+    rheo_data = pd.read_excel(filename, pagename, skiprows = skipped_rows)
+    print rheo_data
+    data_labels = pd.read_excel(filename, pagename, header = labels)
+    print data_labels
+
+def import_rheo_data_again(filename):
+    rheo_data = pd.ExcelFile(filename)
+    print rheo_data
+    print rheo_data.sheet_names
+
+# import_rheo_data(filename, pagename, skipped_rows, labels)
+import_rheo_data_again(filename)
