@@ -29,38 +29,5 @@ import os
 import matplotlib.pylab as plt
 import pandas as pd
 
-#filename = '/Users/rtruby/Desktop/rheologyfilestocsvs/PtBlack_Strain Sweep.xls'
-#pagename = 'Amplitude sweep - 1'
-labels = 1
-skipped_rows = [0, 2]
-
-def import_filenames():
-    file_name = ''
-    file_name_list = list()
-    print "Enter names of Excel files (w/ extension) containing data (STOP to quit): "
-    while ((file_name != 'STOP') & (file_name != 'stop') & (file_name != 'Stop')):
-        file_name = raw_input()
-        if ((file_name != 'STOP') & (file_name != 'stop') & (file_name != 'Stop')):
-            file_name_list.append(file_name)
-    print '\nImporting the following files:\n%r' % file_name_list
-    return file_name_list
-
-def import_rheo_data(filename, pagename, skipped_rows, labels):
-    data_sets = list()
-    dataset = pd.read_excel(filename, pagename, header = labels, skiprows = skipped_rows)
-    return dataset
-
-file_name_list = import_filenames()
 
 
-
-
-
-
-'''
-PtBlackSweep = import_rheo_data(filename, pagename, skipped_rows, labels)
-print PtBlackSweep.columns[0]
-
-variable = 'Storage modulus'
-print PtBlackSweep.loc[:, variable]
-'''
