@@ -43,8 +43,8 @@ skip_rows = [0, 2]              # skip these rows on Excel Files from TRIOS
 
 # Study variables:
 materials = ['Fugitive Ink', 'Catalytic Ink', 'PDMS Matrix', 'EcoFlex Matrix']
-variables = ['Storage modulus', 'Loss modulus', 'Oscillatin strain rate',
-    'Oscillation stress', 'Oscillation stress']
+variables = ['Storage modulus', 'Loss modulus', 'Oscillation strain rate',
+    'Oscillation strain', 'Oscillation stress']
 ignored_var = ['Tan(delta)', 'Complex viscosity', 'Angular frequency', 'Time']
 
 # Plot variables:
@@ -52,6 +52,7 @@ size_of_font = 14               # this is the base font that should be used
 axes_font_factor = 2            # changes axes font relative to size_of_font
 legend_font_factor = -2         # changes legned font relative to size_of_font
 line_width = 2                  # line width for plots
+legend_state = False             # True if wanting legend, False if not
 
 # Choose the fontpath you want for the plot's font.
 # To see what fontpaths are available, uncomment the following code:
@@ -64,7 +65,8 @@ fontpath = '/Library/Fonts/Microsoft/Arial.ttf'
 prop = font_manager.FontProperties(fname = fontpath)
 matplotlib.rcParams['font.family'] = prop.get_name()
 ################################################################################
-def plot_data(folder_name, materials, study_type, file_type):
+
+def get_data(folder_name, materials, study_type, file_type):
     # Create a list that holds all of the file names with rheology data
     current_dir = os.getcwd()
     folder_dir = current_dir + '/' + folder_name
@@ -72,7 +74,9 @@ def plot_data(folder_name, materials, study_type, file_type):
     for material in materials:
         file_name = folder_dir + '/' + material + study_type + file_type
         file_names.append(file_name)
+    return file_names
 
+def plot_data(file_names, xvar, yvar, xaxis, yaxis, legend):
     # Import all of the Excels whose file names are in file_names
     Fugitive_Ink = pd.read_excel(file_names[0], sheet_name, header = label_row, 
         skiprows = skip_rows)
@@ -84,14 +88,14 @@ def plot_data(folder_name, materials, study_type, file_type):
         skiprows = skip_rows)
 
     # Plot the Fugitive Ink Rheology: storage modulus vs. stress
-    x1 = Fugitive_Ink['Oscillation stress']
-    y1 = Fugitive_Ink['Storage modulus']
-    x2 = Catalytic_Ink['Oscillation stress']
-    y2 = Catalytic_Ink['Storage modulus']
-    x3 = PDMS_Matrix['Oscillation stress']
-    y3 = PDMS_Matrix['Storage modulus']
-    x4 = EcoFlex_Matrix['Oscillation stress']
-    y4 = EcoFlex_Matrix['Storage modulus']
+    x1 = Fugitive_Ink[xvar]
+    y1 = Fugitive_Ink[yvar]
+    x2 = Catalytic_Ink[xvar]
+    y2 = Catalytic_Ink[yvar]
+    x3 = PDMS_Matrix[xvar]
+    y3 = PDMS_Matrix[yvar]
+    x4 = EcoFlex_Matrix[xvar]
+    y4 = EcoFlex_Matrix[yvar]
 
     Plot1 = plt.figure(figsize=[5.55, 4.75], tight_layout=True)
     plt.axis([1e-1, 1e3, 1e-1, 1e5])
@@ -99,16 +103,16 @@ def plot_data(folder_name, materials, study_type, file_type):
     plt.loglog(x2, y2, '#ed7e06', linewidth = line_width)
     plt.loglog(x3, y3, '#0a6e95', linewidth = line_width)
     plt.loglog(x4, y4, '#04a35f', linewidth = line_width)
-    plt.xlabel('Shear Stress [Pa]', fontsize = size_of_font + axes_font_factor)
-    plt.ylabel('G\' [Pa]', fontsize = size_of_font + axes_font_factor)
-    # Uncomment for legend:
-    '''
-    plt.legend(['Fugitive Ink', 'Catalytic Ink', 'PDMS Matrix', 'EcoFlex Matrix'], 
+    plt.xlabel(xaxis, fontsize = size_of_font + axes_font_factor)
+    plt.ylabel(yaxis, fontsize = size_of_font + axes_font_factor)
+    if (legend == True):
+        plt.legend(['Fugitive Ink', 'Catalytic Ink', 'PDMS Matrix', 'EcoFlex Matrix'], 
         fontsize = size_of_font + legend_font_factor)
-    '''
     plt.show()
 
-plot_data(folder_name, materials, study_type, file_type)
+files = get_data(folder_name, materials, study_type, file_type)
+plot_data(files, 'Oscillation stress', 'Storage modulus', 
+    'Shear Stress [Pa]', 'G\' [Pa]', legend_state)
 
 
 
